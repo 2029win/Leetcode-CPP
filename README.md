@@ -112,7 +112,98 @@ j++;
     }
     return j;
 }
+
+3.............有序数组的平方
+给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。
+
  
+
+示例 1：
+
+输入：nums = [-4,-1,0,3,10]
+输出：[0,1,9,16,100]
+解释：平方后，数组变为 [16,1,0,9,100]
+排序后，数组变为 [0,1,9,16,100]
+示例 2：
+
+输入：nums = [-7,-3,2,3,11]
+输出：[4,9,9,49,121]
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().///////////“题目要求：你返回的数组必须是用 malloc 申请的；我们（调用你这个函数的人）会负责调用 free() 来释放你返回的数组。”
+ */
+int* sortedSquares(int* nums, int numsSize, int* returnSize) {
+    int i;
+    int* res = (int*)malloc(sizeof(int) * numsSize);//堆区申请一块新内存给调用者。这样调用者 free(res) 的时候，就是在合法释放堆内存，大家都安全，不在原数组上做修改，不用自己写free函数，这是调用者用的。
+    *returnSize =numsSize;////必须这样写，因为第135行是出题人自己给的，不能不用
+    for(i=0;i<numsSize;i++)
+    {
+        res[i]=nums[i]*nums[i];
+    }
+    for(i=0;i<numsSize;i++)
+    {
+       for(int j=0;j<numsSize-1-i;j++)
+       {
+        if(res[j]>res[j+1])
+        {
+            int temp=res[j];
+            res[j]=res[j+1];
+            res[j+1]=temp;
+        }
+       }
+    }
+    return res;
+}
+
+ 4.............长度最小的子数组
+ 给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其总和大于等于 target 的长度最小的 子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。//////////意思是从1到之后n项或从j到之后的x项，其中n和x可以是符合标准的任意值。
+
+ 
+
+示例 1：
+
+输入：target = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+示例 2：
+
+输入：target = 4, nums = [1,4,4]
+输出：1
+示例 3：
+
+输入：target = 11, nums = [1,1,1,1,1,1,1,1]
+输出：0
+ 
+
+提示：
+
+1 <= target <= 109
+1 <= nums.length <= 105
+1 <= nums[i] <= 104
+ 
+ 
+ 答案（官方答案）
+ int minSubArrayLen(int s, int* nums, int numsSize) {
+    if (numsSize == 0) {
+        return 0;
+    }
+    int ans = INT_MAX;//////////代表int类型能存的最大值（通常是 2147483647），是一个超大的数。如果循环结束后ans还是这个超大数，就说明全程没找到符合条件的子数组。
+    for (int i = 0; i < numsSize; i++) {
+        int sum = 0;
+        for (int j = i; j < numsSize; j++) {
+            sum += nums[j];
+            if (sum >= s) {
+                ans = fmin(ans, j - i + 1);////// j- i + 1：子数组的长度计算公式。j 是结束下标，i 是起始下标，比如 i=4、j=5，长度就是 5-4+1=2，和示例 1 的结果一致。
+fmin(a,b)：C 语言<math.h>里的函数，作用是取两个数里更小的那个。这里就是把「当前找到的子数组长度」和「之前记录的最小长度 ans」对比，取更小的那个更新 ans。
+                break;
+            }
+        }
+    }
+    return ans == INT_MAX ? 0 : ans;////////如果ans最终还是等于初始的INT_MAX：说明循环全程没找到任何符合条件的子数组，返回 0；
+否则：返回我们找到的、所有符合条件的子数组里的最小长度ans。
+}
 
 
 
