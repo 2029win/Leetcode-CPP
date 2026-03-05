@@ -94,3 +94,40 @@ INT_MAX 那一套其实是程序员处理 “求最小值” 问题的标准偷�
   知识点：1.可以增加 <stdlib.h> 头文件：但是我没加
 我们使用了 abs() 函数来计算整数的绝对值，这个函数在 stdlib.h 中定义。如：int a = abs(total_sum - sum2 * 2);
 
+
+七........  
+疑问与回答：1.细讲 (*returnColumnSizes)[i] = n;
+这是 C 语言指针语法中最 “反人类” 的地方之一，我们通过层层剥洋葱的方式来理解它。
+1. 先看这个变量到底是什么：int** returnColumnSizes
+在函数参数里，它被定义为 int**（二级指针）。
+你可以把它想象成：这是一个用来 “存地址” 的地址。
+LeetCode 的调用者（也就是测试程序）在外面定义了一个变量（假设叫 int* colSizes），然后把 colSizes 的地址传给了你。
+你的任务是：在函数内部创建一个数组，然后让外面的 colSizes 指向这个数组。
+2. 第一步：*returnColumnSizes 是什么？
+星号 * 在 C 语言里是 “取值 / 解引用” 的意思。
+returnColumnSizes 是外面那个变量的地址。
+*returnColumnSizes 意思就是：我要操作外面那个变量本身了。
+所以代码里先有 *returnColumnSizes = malloc(...);，这就相当于给外面的变量分配了内存。
+3. 第二步：为什么要加括号 (*returnColumnSizes)[i]？
+这是一个运算符优先级的问题。
+方括号 [] 的优先级比星号 * 高。
+如果不加括号，写成 *returnColumnSizes[i]，编译器会理解成：
+先算 returnColumnSizes[i]（把 returnColumnSizes 当成数组取下标）。
+再对结果取 *。
+这是错的！ 会导致程序崩溃。
+加上括号 (*returnColumnSizes)[i]，编译器会理解成：
+先算 *returnColumnSizes：拿到我在函数里 malloc 出来的那个数组。
+再算 [i]：访问这个数组的第 i 个元素。
+这才是对的！
+4. 总结
+(*returnColumnSizes)[i] = n; 翻译成大白话就是：
+“我在函数里创建了一个记录列数的数组，现在我把这个数组的第 i 个位置的值，设置为 n。”
+
+  
+
+知识点：1.void *memset(void *ptr, int value, size_t num);
+memset(matrix[i], 0, sizeof(int) * n);    ptr	matrix[i]	起始地址。你要从内存中的哪个位置开始填充。这里指的是矩阵第 i 行的首地址。
+                                          value	0	填充的值。你要把这段内存填成什么。注意：虽然这里写的是 int 类型，但它实际上是按字节（Byte）填充的，通常填 0 最常用。
+                                          num	sizeof(int) * n	填充的字节数。你要填充多长的内存。这里是 n 个 int 所占的总字节数。
+
+2.
