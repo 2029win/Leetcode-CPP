@@ -257,11 +257,84 @@ return 0;
 }
 
 
+.6.........
+在一个城市区域内，被划分成了n * m个连续的区块，每个区块都拥有不同的权值，代表着其土地价值。目前，有两家开发公司，A 公司和 B 公司，希望购买这个城市区域的土地。 
+
+现在，需要将这个城市区域的所有区块分配给 A 公司和 B 公司。
+
+然而，由于城市规划的限制，只允许将区域按横向或纵向划分成两个子区域，而且每个子区域都必须包含一个或多个区块。 为了确保公平竞争，你需要找到一种分配方式，使得 A 公司和 B 公司各自的子区域内的土地总价值之差最小。 
+
+注意：区块不可再分。
+
+输入描述
+第一行输入两个正整数，代表 n 和 m。 
+
+接下来的 n 行，每行输出 m 个正整数。
+
+输出描述
+请输出一个整数，代表两个子区域内土地总价值之间的最小差距。
+输入示例
+3 3
+1 2 3
+2 1 3
+1 2 3
+输出示例
+0
 
 
+#include <stdio.h>
+#include <limits.h>
+int main()
+{
+    int n,m;
+    scanf("%d %d",&n,&m);
+    int arr[n][m];
+    int i,j;
+    int total_sum=0;
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<m;j++)
+        {
+            scanf("%d",&arr[i][j]);
+            total_sum += arr[i][j];////////////为下面简单
+        }
+    }
+    int sum1=0,sum2=0;
+    int ans = INT_MAX;
+    for(i=1;i<n;i++)
+    {
+        int a;
+         for(j=0;j<m;j++)
+         {
+            sum1=sum1+arr[i-1][j];
+                 
+         }
+         if(sum1*2-total_sum>=0)
+         {
+            a=sum1*2-total_sum;
+         }
+         else{a=total_sum-sum1*2;}
+       ans = fmin(ans, a);
+    }///////////sum1不重复赋值为0，可以使sum1表示为前n行的总和
+ for(j=1;j<m;j++)
+    {
+          int a;
+         for(i=0;i<n;i++)
+         {
+            sum2=sum2+arr[i][j-1];
+         }
+         if(total_sum-sum2*2>=0)
+         {
+            a=total_sum-sum2*2;
+         }
+         else{a=sum2*2-total_sum;}
+         ans = fmin(ans, a);
+    }
+     printf("%d\n", ans);
+return 0;
 
 
-
+}
 
 
 
